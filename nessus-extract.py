@@ -18,6 +18,7 @@ parser.add_argument('-p', '--pluginid', default='10863', help='Plugin ID, defaul
 args = parser.parse_args()
 
 try:
+	totalcount = 0
 	for i, nessusfile in enumerate(args.inputfile):
 		print("\r\n[*] Processing Nessus File")
 		f = open(nessusfile, 'r')
@@ -40,11 +41,13 @@ try:
 							text_file.write(ipaddress+':'+report_item.attrib['port']+'\n')
 							count += 1
 		print ('[*] '+str(count)+' lines written to '+args.outputfile)
-		if args.pluginid == str(10863):
-			print('[*] Looks like your generating a list of SSL ports, might want to use this to evaluate them: /opt/testssl.sh/testssl.sh --file '+args.outputfile+' -oA testssl')
+		totalcount += count		
 		f.close()
 		text_file.close()
 		print(f"Nessusfile {nessusfile} completed.")
+	print(f"[*] {totalcount} total lines written to {args.outputfile}")
+	if args.pluginid == str(10863):
+			print('[*] Looks like your generating a list of SSL ports, might want to use this to evaluate them: /opt/testssl.sh/testssl.sh --file '+args.outputfile+' -oA testssl')
 except Exception as e:
 	print(f"Stuff happened: {e}")
 	exit(1)
