@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 import xml.etree.ElementTree as ET
 import argparse
+from sys import argv
+from os import path
 
 #GREATBIGBANNERBECAUSEWHYNOT
 print("          _____ ____          _____ ____          _____ ____ ")
@@ -11,10 +13,14 @@ print("/__/\\_ \\____   ||___/__/\\_ \____   ||___/__/\\_ \\____   ||___|")
 print("      \\/    |__|          \\/    |__|          \\/    |__|     ")                                                                                                                                         
 print("twitter.com/x41x41x41, medium.com/@x41x41x41, youtube.com/x41x41x41, github.com/x41x41x41, etc, etc")
 # Parse arguments
-parser = argparse.ArgumentParser()
+parser = argparse.ArgumentParser(prog=path.basename(argv[0]),
+                                    usage='%(prog)s [options] -i <INPUTFILE> -o <OUTPUTFILE>',
+                                    description='creates a list of host:port from .nessus files with given PluginID'
+                                    )
 parser.add_argument('-i', '--inputfile', nargs='+', default='nessus.nessus', help='input file (.nessus)')
 parser.add_argument('-o', '--outputfile', default='output.txt', help='output file (.txt)')
 parser.add_argument('-p', '--pluginid', default='10863', help='Plugin ID, defaults to 10863 (SSL Certificate Information)')
+parser.add_argument('-a', '--append', action='store_true', help='Append to existing outputfile')
 args = parser.parse_args()
 
 try:
@@ -22,10 +28,10 @@ try:
 	for i, nessusfile in enumerate(args.inputfile):
 		print("\r\n[*] Processing Nessus File")
 		f = open(nessusfile, 'r')
-		if i == 0:
-			text_file = open(args.outputfile, 'w')
-		else:
+		if i > 0 or args.append:
 			text_file = open(args.outputfile, 'a')
+		else:
+			text_file = open(args.outputfile, 'w')
 		xml_content = f.read()
 		root = ET.fromstring(xml_content)
 		count = 0
